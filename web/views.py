@@ -27,39 +27,39 @@ def Dashboard(request):
         context['message'] = "Login Sucessful"
     return render(request, 'dashboard.html', context=context)
 
-@login_required
-def AccountSetting(request):
-    """view to render account setting apge"""
-    pass
-
-def Login(request):
-    """view to handle incoming login request"""
-    if request.method == 'GET':
-        next = request.GET.get('next', '/')
-    if request.method == "POST":
-        next = request.GET.get('next', '/')
-        user_email = request.POST['user_email']
-        password = request.POST['password']
-        user = authenticate(username=user_email, password=password)
-        if user is not None:
-            login(request, user)
-            if next == '/':
-                return redirect('/web/dashboard/?status=login')
-            return HttpResponseRedirect(next)
-        else:
-            error = 'Incorrect Email or Password'
-            return render(request, 'login.html',
-                          context={'error': error, 'next':next})
-    else:
-        return render(request, "login.html", {'next': next})
-
-def Logout(request):
-    """view to handle the incoming logout requst"""
-    logout(request)
-    return redirect('/web/landing/?status=logout')
-    LogoutMessage="Logout Successful"
-    return render(request, 'landing.html',
-                  context={'message':LogoutMessage})
+# @login_required
+# def AccountSetting(request):
+#     """view to render account setting apge"""
+#     pass
+#
+# def Login(request):
+#     """view to handle incoming login request"""
+#     if request.method == 'GET':
+#         next = request.GET.get('next', '/')
+#     if request.method == "POST":
+#         next = request.GET.get('next', '/')
+#         user_email = request.POST['user_email']
+#         password = request.POST['password']
+#         user = authenticate(username=user_email, password=password)
+#         if user is not None:
+#             login(request, user)
+#             if next == '/':
+#                 return redirect('/dashboard/?status=login')
+#             return HttpResponseRedirect(next)
+#         else:
+#             error = 'Incorrect Email or Password'
+#             return render(request, 'login.html',
+#                           context={'error': error, 'next':next})
+#     else:
+#         return render(request, "login.html", {'next': next})
+#
+# def Logout(request):
+#     """view to handle the incoming logout requst"""
+#     logout(request)
+#     return redirect('/landing/?status=logout')
+#     LogoutMessage="Logout Successful"
+#     return render(request, 'landing.html',
+#                   context={'message':LogoutMessage})
 
 def GetCompany(request):
     """view to handle the ajax request when user search for the company to claim"""

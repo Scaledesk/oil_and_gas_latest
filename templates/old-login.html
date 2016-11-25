@@ -6,7 +6,7 @@
 
     <h1 class="text-center">User and Company Details</h1>
     <div class="col-md-offset-3 col-md-6">
-        <form class="form-login custom-form-login" method="post" action="/web/login/?next={{ next }}">
+        <form class="form-login custom-form-login" method="post" action="/login/?next={{ next }}">
             {% if message %}
             <p style="color:green; font-size:125%">{{ message }}</p>
             {% endif %}
@@ -32,12 +32,12 @@
                     <a data-toggle="modal" href="login.html#myModal"> Forgot Password?</a>
                 </span>
             </label>
-            
+
             <button class="btn ladda-button btn-theme btn-block" data-style="slide-right" style="color: #2A3542"><span class="ladda-label"><i class="fa fa-lock"></i> SIGN IN</span></button>
             <hr>
             <div class="registration">
                 Not registered yet?<br/>
-                <a class="" href="/web/create_user_and_claim_company">
+                <a class="" href="/create_user_and_claim_company">
                     Click to register
                 </a>
             </div>

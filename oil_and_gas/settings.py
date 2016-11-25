@@ -164,7 +164,7 @@ MEDIA_URL = '/static/media/'
 SERIALIZABLE_VALUE={
 }
 
-LOGIN_URL = '/web/login/'
+LOGIN_URL = '/login/'
 
 CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
 

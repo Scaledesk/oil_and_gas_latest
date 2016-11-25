@@ -6,7 +6,7 @@
 {% block content %}
 <h1 class="text-center">User and Company Details</h1>
 <div class="col-md-offset-3 col-md-6">
-  <form class="form-login custom-form-login" method="post" action="/web/search_company/" autocomplete="on">
+  <form class="form-login custom-form-login" method="post" action="/search_company/" autocomplete="on">
     {% csrf_token %}
     <div class="inner-addon left-addon">
       <input class="form-control" id="search_text" name="search_text" type="text" autocomplete="off"/>
@@ -28,7 +28,7 @@
                     $("#search_text").keypress(function () {
                         var value_l = $("#search_text").val();
                         if (value_l.length >= 1) {
-                            $.get("/web/search-company-ajax", function (data) {
+                            $.get("/search-company-ajax", function (data) {
                                 var $input = $('#search_text');
                                 $input.typeahead({
                                     source: data, autoSelect: false, displayText: function (item) {

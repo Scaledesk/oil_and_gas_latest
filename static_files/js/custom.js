@@ -1,67 +1,141 @@
-$(document).ready(function(){
-    // $(window).bind('scroll', function() {
-    //     var navHeight = 300; // custom nav height
-    //     ($(window).scrollTop() > navHeight) ? $('nav').addClass('goToTop') : $('nav').removeClass('goToTop');
-    // });
+jQuery(document).ready(function($){
+    var mainHeader = $('.cd-auto-hide-header'),
+        secondaryNavigation = $('.cd-secondary-nav'),
+    //this applies only if secondary nav is below intro section
+        belowNavHeroContent = $('.sub-nav-hero'),
+        headerHeight = mainHeader.height();
 
-    // $(window).scroll(function () {
-    //     //if you hard code, then use console
-    //     //.log to determine when you want the
-    //     //nav bar to stick.
-    //     console.log($(window).scrollTop());
-    //     if ($(window).scrollTop() > 46) {
-    //         $('.navbar').addClass('navbar-fixed-top');
-    //     }
-    //     if ($(window).scrollTop() < 47) {
-    //         $('.navbar').removeClass('navbar-fixed-top');
-    //     }
-    // });
-    // var MQL = 1170;
+    //set scrolling variables
+    var scrolling = false,
+        previousTop = 0,
+        currentTop = 0,
+        scrollDelta = 10,
+        scrollOffset = 150;
 
-    //primary navigation slide-in effect
-    // if($(window).width() > MQL) {
-    //     var headerHeight = $('.navbar').height();
-    //     $(window).on('scroll',
-    //         {
-    //             previousTop: 0
-    //         },
-    //         function () {
-    //             var currentTop = $(window).scrollTop();
-    //             //check if user is scrolling up
-    //             if (currentTop < this.previousTop ) {
-    //                 //if scrolling up...
-    //                 if (currentTop > 0 && $('.navbar').hasClass('is-fixed')) {
-    //                     $('.cd-header').addClass('is-visible');
-    //                 } else {
-    //                     $('.cd-header').removeClass('is-visible is-fixed');
-    //                 }
-    //             } else {
-    //                 //if scrolling down...
-    //                 $('.cd-header').removeClass('is-visible');
-    //                 if( currentTop > headerHeight && !$('.cd-header').hasClass('is-fixed')) $('.cd-header').addClass('is-fixed');
-    //             }
-    //             this.previousTop = currentTop;
-    //         });
-    // }
+    mainHeader.on('click', '.nav-trigger', function(event){
+        // open primary navigation on mobile
+        event.preventDefault();
+        mainHeader.toggleClass('nav-open');
+    });
 
-
-
-
-    $(window).bind('scroll', function () {
-        if ($(window).scrollTop() > 100) {
-            $('.navbar').removeClass('m-t-46');
-        } else {
-            $('.navbar').addClass('navbar-fixed-top');
+    $(window).on('scroll', function(){
+        if( !scrolling ) {
+            scrolling = true;
+            (!window.requestAnimationFrame)
+                ? setTimeout(autoHideHeader, 250)
+                : requestAnimationFrame(autoHideHeader);
         }
     });
 
-    // $('nav').on('affix.bs.affix', function () {
-    //     var navHeight = $('.navbar').outerHeight(true);
-    //     $('#nav + .container').css('margin-top', navHeight);
-    // });
-    //
-    // $('nav').on('affix-top.bs.affix', function () {
-    //     $('#nav + .container').css('margin-top', 0);
-    // });
+    $(window).on('resize', function(){
+        headerHeight = mainHeader.height();
+    });
+
+    function autoHideHeader() {
+        var currentTop = $(window).scrollTop();
+
+        ( belowNavHeroContent.length > 0 )
+            ? checkStickyNavigation(currentTop) // secondary navigation below intro
+            : checkSimpleNavigation(currentTop);
+
+        previousTop = currentTop;
+        scrolling = false;
+    }
+
+    function checkSimpleNavigation(currentTop) {
+        //there's no secondary nav or secondary nav is below primary nav
+        if (previousTop - currentTop > scrollDelta) {
+            //if scrolling up...
+            mainHeader.removeClass('is-hidden');
+        } else if( currentTop - previousTop > scrollDelta && currentTop > scrollOffset) {
+            //if scrolling down...
+            mainHeader.addClass('is-hidden');
+        }
+    }
+
+    function checkStickyNavigation(currentTop) {
+        //secondary nav below intro section - sticky secondary nav
+        var secondaryNavOffsetTop = belowNavHeroContent.offset().top - secondaryNavigation.height() - mainHeader.height();
+
+        if (previousTop >= currentTop ) {
+            //if scrolling up...
+            if( currentTop < secondaryNavOffsetTop ) {
+                //secondary nav is not fixed
+                mainHeader.removeClass('is-hidden');
+                secondaryNavigation.removeClass('fixed slide-up');
+                belowNavHeroContent.removeClass('secondary-nav-fixed');
+            } else if( previousTop - currentTop > scrollDelta ) {
+                //secondary nav is fixed
+                mainHeader.removeClass('is-hidden');
+                secondaryNavigation.removeClass('slide-up').addClass('fixed');
+                belowNavHeroContent.addClass('secondary-nav-fixed');
+            }
+
+        } else {
+            //if scrolling down...
+            if( currentTop > secondaryNavOffsetTop + scrollOffset ) {
+                //hide primary nav
+                mainHeader.addClass('is-hidden');
+                secondaryNavigation.addClass('fixed slide-up');
+                belowNavHeroContent.addClass('secondary-nav-fixed');
+            } else if( currentTop > secondaryNavOffsetTop ) {
+                //once the secondary nav is fixed, do not hide primary nav if you haven't scrolled more than scrollOffset
+                mainHeader.removeClass('is-hidden');
+                secondaryNavigation.addClass('fixed').removeClass('slide-up');
+                belowNavHeroContent.addClass('secondary-nav-fixed');
+            }
+
+        }
+    }
+
+
+
+    /*Section scroll*/
+
+
+
+    $("a").on('click', function(event) {
+
+        // Make sure this.hash has a value before overriding default behavior
+        if (this.hash !== "") {
+            // Prevent default anchor click behavior
+            event.preventDefault();
+
+            // Store hash
+            var hash = this.hash;
+
+            // Using jQuery's animate() method to add smooth page scroll
+            // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+            $('html, body').animate({
+                scrollTop: $(hash).offset().top - 90
+            }, 800, function(){
+
+                // Add hash (#) to URL when done scrolling (default click behavior)
+//        window.location.hash = hash;
+            });
+        } // End if
+
+
+
+
+
+    });
+
+
+    $("input[type ='text']").click(function(){
+        var $this = $(this);
+        $this.attr("placeholder", "");
+        $this.parent().find(".float-label").addClass("label-top");
+
+    });
+
+
+
+
+
+
 });
+
+
+
 

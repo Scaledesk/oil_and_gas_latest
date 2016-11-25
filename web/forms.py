@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.models import User
-from core.models import CompanyModel, UserProfile
+from core.models import *
 from pprint import pprint
 
 class BaseForm(forms.Form):
