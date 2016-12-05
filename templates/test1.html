@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form id="target" action="destination.html">
+  <input type="text" value="Hello there">
+  <input type="submit" value="Go">
+</form>
+<div id="other">
+  Trigger the handler
+</div>
+
+{% block custom_js %}
+<script>
+$( "#target" ).submit(function( event ) {
+  alert( "Handler for .submit() called." );
+  event.preventDefault();
+});
+</script>
+{% endblock%}
+{% endblock%}

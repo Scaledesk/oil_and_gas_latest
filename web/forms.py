@@ -1,49 +1,9 @@
-from django import forms
-from django.forms import ModelForm
-from django.contrib.auth.models import User
-from core.models import *
-from pprint import pprint
-
-class BaseForm(forms.Form):
-    """Base form for all the forms in EMS"""
-    def is_phone_no_invalid(self, phone_number):
-        """ Util function for validating phone number """
-        return ((not str(phone_number).isdigit()) or (len(phone_number)!=10))
-
-    def is_name_invalid(self,name):
-        """
-        This function return true if name contains any digit. However it fails to address the special characters.
-        """
-        return self.has_numbers(name)
-
-    def user_email_already_exists(self, email):
-        """
-        This function return true if the user email provided already exists in database.
-        """
-        return User.objects.filter(email=email).exists()
-
-    def company_email_already_exists(self, email):
-        """
-        This function return true if the company email provided already exists in database.
-        """
-        return CompanyModel.objects.filter(company_email=email).exists()
-
-    def user_phone_no_already_exists(self, phone_no):
-        """
-        This function return true if the Phone Number by user provided already exists in user's database.
-        """
-        return UserProfile.objects.filter(phone_no=phone_no).exists()
-
-    def company_phone_no_already_exists(self, phone_no):
-        """
-        This function return true if the Phone Number by user provided already exists in user's database.
-        """
-        return CompanyModel.objects.filter(company_phone_no=phone_no).exists()
-
-    def has_numbers(self,inputString):
-        """This function to to check if """
-        return any(char.isdigit() for char in inputString)
-
+# from django import forms
+# from django.forms import ModelForm
+# from django.contrib.auth.models import User
+# from core.models import *
+# from pprint import pprint
+from core.forms import *
 
 class CreateUserAndCompanyForm(BaseForm):
     """Form for user registration/creating account"""

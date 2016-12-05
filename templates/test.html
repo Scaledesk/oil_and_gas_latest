@@ -1,19 +1,102 @@
-{% extends "base.html" %}
-{% load widget_tweaks %}
+<html>
+<head>
+  <script type="text/javascript" src="/static/js/jquery.js"></script>
+  <script type="text/javascript">
 
+  function checkCompanyName()
+  {
+    var name=document.getElementById( "company_name" ).value;
+    if(name)
+    {
+      $.ajax({
+        type: 'post',
+        url: '/check-company-name/',
+        data: {
+          company_name:company_name,
+        },
+        success: function (response) {
+          $( '#company_name_status' ).html(response);
+          if(response=="True")
+          {
+            return true;
+          }
+          else
+          {
+            return false;
+          }
+        }
+      });
+    }
+    else
+    {
+      $( '#company_name_status' ).html("");
+      return false;
+    }
+  }
 
+  // function checkUserEmail()
+  // {
+  //   var email=document.getElementById( "user_email" ).value;
 
-{% block content %}
-<h1 class="text-center">User and Company Details</h1>
-<div class="col-md-offset-3 col-md-6">
-  <form class="form-login custom-form-login" method="post" action="/test/?search=">
-    {% csrf_token %}
-    <div class="inner-addon left-addon">
-      <input id="search_text" name="search_text" type="text" class="form-control" />
-    </div>
+  //   if(email)
+  //   {
+  //     $.ajax({
+  //       type: 'post',
+  //       url: '/check_user-email-exist/',
+  //       data: {
+  //         user_email:user_email,
+  //       },
+  //       success: function (response) {
+  //         $( '#user_email_status' ).html(response);
+  //         if(response=="OK")
+  //         {
+  //           alert('error');
+  //           return true;
+  //         }
+  //         else
+  //         {
+  //           return false;
+  //         }
+  //       }
+  //     });
+  //   }
+  //   else
+  //   {
+  //     $( '#user_email_status' ).html("");
+  //     return false;
+  //   }
+  // }
+
+  // function checkall()
+  // {
+  //   var namehtml=document.getElementById("company_name_status").innerHTML;
+  //   var emailhtml=document.getElementById("user_email_status").innerHTML;
+  //
+  //   if((namehtml && emailhtml)=="OK")
+  //   {
+  //     return true;
+  //   }
+  //   else
+  //   {
+  //     return false;
+  //   }
+  // }
+
+  </script>
+</head>
+<body>
+
+  <form method="POST" action="/test/">
+     <!--onsubmit="return checkall(); -->
+    <p>Company Name</p>
+    <input type="text" name="company_name" id="company_name" onblur="checkCompanyName();">
+    <span id="company_name_status"></span>
+    <br>
+    <!-- <p>User Email</p>
+    <input type="email" name="user_email" id="user_email" onblur="checkUserEmail();">
+    <span id="user_email_status"></span> -->
+    <input type="submit" name="submit_form" value="Submit">
   </form>
-</div>
 
-
-
-{% endblock %}
+</body>
+</html>

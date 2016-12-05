@@ -34,6 +34,9 @@ class BaseModel(models.Model):
     class Meta:
         abstract=True
 
+class NewsLetterSubscription(BaseModel):
+    """ model to save email who has subscribed for newsletter """
+    email = models.EmailField()
 
 class UserProfile(BaseModel):
     """ Model for storing basic information about a user """
@@ -121,7 +124,7 @@ class CompanyModel(BaseModel):
         ('O', 'Other'),)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=150, blank=False, unique=True)
-    company_email = models.CharField(max_length=150,blank=False)
+    company_email = models.CharField(max_length=150,blank=False, unique=True)
     company_phone_no = models.CharField(max_length=10,blank=False)
     ad_reference = models.CharField(max_length=1,choices=WHERE_YOU_HEARD_ABT_US_CHOICES, default='A')
     is_claimed = models.BooleanField(default=False)

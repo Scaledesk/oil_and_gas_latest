@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from core.models import *
 from pprint import pprint
@@ -27,7 +28,20 @@ from datetime import datetime
 #     return True
 
 
+def ChangePasswordUtil(data_dict, user):
+    """Util function to change password. Return true if password is changed"""
+    old_password = data_dict['old_password']
+    password = data_dict['password']
+    confirm_password = data_dict['confirm_password']
+    db_password = None
 
+    if (password == confirm_password) and (old_password != password):
+        db_password = user.password
+        if check_password(password=old_password, encoded=db_password):
+            user.set_password(password)
+            user.save()
+            return True
+    return False
 
 
 def CreateUserUtil(data_dict):

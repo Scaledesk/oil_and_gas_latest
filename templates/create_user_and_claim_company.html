@@ -1,9 +1,7 @@
-{% extends "base1.html"%}
+{% extends "base.html"%}
 {% load widget_tweaks %}
 {% block custom_style %}
 {% endblock %}
-
-
 
 {% block content %}
 
@@ -25,7 +23,7 @@
     </div>
     <div class="col-md-6 login-form register-padding">
       <h3>Register</h3>
-      <form id="form"  action="/create-user-and-claim-company/" method="post" enctype="multipart/form-data">
+      <form id="create_user_and_claim_company_form"  action="/create-user-and-claim-company/" method="post" enctype="multipart/form-data">
         {% if error %}
         {% for errors in error %}
         <p class="text-danger">{{ errors }}</p>
@@ -69,7 +67,8 @@
 
           <div class="form-group">
             <label for="user_email">User Email:</label><br>
-            {{ user_form.user_email|attr:"class:form-control"|attr:"type:email"|attr:"required:true"|attr:"autocomplete:off" }}
+            {{ user_form.user_email|attr:"class:form-control"|attr:"type:email"|attr:"required:true"|attr:"autocomplete:off"}}
+            <p class="text-danger" id="user_email_error"></p>
           </div>
 
           <div class="form-group">
@@ -80,12 +79,14 @@
           <div class="form-group">
             <label for="password">Password:</label>
             {{ user_form.password|attr:"class:form-control"|attr:"type:password"|attr:"required:true"|attr:"autocomplete:off" }}
+            <p class="text-danger" id="password_error"></p>
           </div>
 
 
           <div class="form-group">
             <label for="password">Confirm Password:</label>
             {{ user_form.confirm_password|attr:"class:form-control"|attr:"type:password"|attr:"required:true"|attr:"autocomplete:off" }}
+            <p class="text-danger" id="confirm_password_error"></p>
           </div>
 
 
@@ -96,7 +97,7 @@
               </p>
             </div>
           </div>
-          <button class="btn register-btn pull-left" style="background: #feee41;color: #484848"><i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;
+          <button type="submit" class="btn register-btn pull-left" style="background: #feee41;color: #484848"><i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;
             Register
           </button>
           <!--<div class="row visible-xs">-->
@@ -133,7 +134,6 @@
               document.getElementById("user_form").style.visibility = 'visible';
               document.getElementById("company_name").readOnly = true;
               // document.getElementById("company_name").disabled = true;
-
             }
           });
         }, 'json');
@@ -141,4 +141,83 @@
     });
   });
   </script>
+
+
+
+  <script>//Form Validation Script
+  var user_email_check = false;
+  // var user_phone_no_check = false
+  var password_check = false;
+  var confirm_password_check = false;
+
+  $("#id_user_email").change(function(){
+    user_email_check = false;
+    $("user_email_error" ).text( "" );
+    // $("#user_email_message" ).text( "" );
+    if ($("#id_user_email").val() == ""){
+      $("#user_email_error").text("You can't leave this empty.")
+    }else {
+      $("#loader_user_email").show();
+      $.post("/account/check-user-email-ajax/",{
+        'csrfmiddlewaretoken' : getCookie('csrftoken'),
+        'user_email' : $("#id_user_email").val() },
+        function(data, status){
+          $("#loader_user_email").hide();
+          if (data == 'True'){
+            // $("#id_user_email").prop("readonly", true);
+            // $("#id_user_email").attr('disabled','disabled');
+            $("#user_email_error" ).text( "This email id is already assiociated with another account." );
+
+            // $("#user_email_message" ).text( "This email can be registered" );
+
+          }else {
+            // $("#user_email_message" ).text( "" );
+            $("#user_email_error" ).text( "" );
+            user_email_check = true;
+
+          }
+        });
+      }
+    });
+
+    $("#id_password").change(function(){
+      password_check = false;
+      $("#id_confirm_password").val("")
+      $("#confirm_password_error" ).text( "" );
+      if ($("#id_password").val() == ""){
+        $("#password_error").text("You can't leave this empty.")
+      }else{
+        if ($("#id_password").val().length < 8){
+          $("#password_error" ).text( "Password must contain atleast 8 characters" );
+        }else {
+          password_check = true;
+          $("#password_error" ).text( "" );
+        }
+      }
+    });
+
+    $("#id_confirm_password").blur(function(){
+      confirm_password_check = false;
+      if ($("#id_confirm_password").val() == ""){
+        $("#confirm_password_error").text("You can't leave this empty.")
+      }else {
+        if($("#id_confirm_password").val() != $("#id_password").val()){
+          $("#confirm_password_error").text("New password and confirm password do not match.")
+        }else {
+          $("#confirm_password_error" ).text( "" );
+          confirm_password_check = true;
+        }
+      }
+    });
+
+    $('#create_user_and_claim_company_form').submit(function(e) {
+      if (!(password_check && confirm_password_check && user_email_check)){
+        e.preventDefault();
+        alert('password_check ' + password_check)
+        alert('confirm_password_check ' + confirm_password_check)
+        alert('user_email_check ' + user_email_check)
+      }
+    });
+    </script>
+
   {% endblock %}

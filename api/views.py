@@ -15,7 +15,6 @@
 # from rest_framework.permissions import IsAuthenticated
 # from django.views.generic import generics
 
-
 from rest_framework import filters
 from rest_framework import generics
 from core.models import *

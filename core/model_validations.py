@@ -1,8 +1,6 @@
 from pprint import pprint
 from core.models import *
 
-
-
 #### Methods to validate model objects before saving #####
 def is_phone_no_invalid(self, phone_number):
     """ Returns True if phone no provided is invalid """

@@ -36,39 +36,44 @@ urlpatterns = [
     url(r'^dashboard', Dashboard, name='dashboard'),
 
     #Registration Functionality
-    url(r'^create-user-and-claim-company/', CreateUserAndClaimCompany),
-    url(r'^create-user-and-company', CreateUserAndCompany),
-    url(r'^get-company/', GetCompany),
+    url(r'^create-user-and-claim-company/', CreateUserAndClaimCompany, name="create_user_and_claim_company"),
+    url(r'^create-user-and-company', CreateUserAndCompany, name="create_user_and_company"),
+    url(r'^get-company/', GetCompany, name="get_company"),
 
     #Free
-    url(r'^free_field', FreeField),
+    url(r'^free_field', FreeField, name="free_field"),
 
     #Premium
-    url(r'^gallery', Gallery),
-    url(r'^basic_premium_field', BasicPremiumField),
-    url(r'^brochure', Brochure),
+    url(r'^gallery', Gallery, name="gallery"),
+    url(r'^basic_premium_field', BasicPremiumField, name="basic_premium_field"),
+    url(r'^brochure', Brochure, name="brochure"),
 
-    url(r'^video_link', VideoLink),
-    url(r'^alliance', Alliance),
-    url(r'^search_alliance', SearchAlliance),
+    url(r'^video_link', VideoLink, name="video_link"),
+    url(r'^alliance', Alliance, "alliance"),
+    url(r'^search_alliance', SearchAlliance, "search_alliance"),
 
 
-    url(r'^location', Location),
-    url(r'^certification', Certification),
-    url(r'^social_link', SocialLink),
+    url(r'^location', Location, name="location"),
+    url(r'^certification', Certification, name="certification"),
+    url(r'^social_link', SocialLink, name="social_link"),
 
     #Super PremiumFields
-    url(r'^publication', Publication),
+    url(r'^publication', Publication, name="publication"),
     # url(r'^country', Country),
 
     #Requirement
-    url(r'^post_requirement', PostRequirement),
+    url(r'^post_requirement', PostRequirement, name="post_requirement"),
 
     #Search CompanyModel
-    url(r'^search_company', SearchCompany),
-    url(r'^search-company-ajax', SearchCompanyAjax),
-    #
-    # url(r'^test', Test),
-
+    url(r'^search_company', SearchCompany, name="search_company"),
+    url(r'^search-company-ajax', SearchCompanyAjax, name="search_company_ajax"),
+    url(r'^check-user-email-ajax', CheckUserEmailAjax, name="check_user_email_ajax"),
+    url(r'^check-company-name-ajax', CheckCompanyNameAjax, name="check_company_name_ajax"),
+    url(r'^check-company-email-ajax', CheckCompanyEmailAjax, name="check_company_email_ajax"),
+    url(r'^test', Test),
+    url(r'^test1', Test1),
 ]# + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static('/libs/', document_root='static/libs/')
+# urlpatterns += static('/views/', document_root='static/views/')
+urlpatterns += static('/assets/', document_root='static/assets/')

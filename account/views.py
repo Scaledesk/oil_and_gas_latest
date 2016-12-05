@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from pprint import pprint
 import json as simplejson
 from core.models import *
@@ -59,6 +60,30 @@ def Logout(request):
     return render(request, 'landing.html',
                   context={'message':LogoutMessage})
 
+@login_required
+def ChangePassword(request):
+    """view to handle the change password request"""
+    # current_form = ChangePasswordForm()
+    if request.method == 'GET':
+        return render(request, 'change_password.html')
+    if request.method == "POST":
+        # old_password = request.POST['old_password']
+        # password = request.POST['password']
+        # confirm_password = request.POST['confirm_password']
+        # pprint("_________________" + str(request.POST))
+        if ChangePasswordUtil(request.POST, request.user):
+            return HttpResponse("password changed")
+        else:
+            return Http404
+
+def CheckUserEmailAjax(request):
+    # pprint("_________" + User.objects.filter(email=request.POST['user_email']))
+    return HttpResponse(User.objects.filter(email=request.POST['user_email']).exists())
+
+def CheckPasswordAjax(request):
+    return HttpResponse(check_password(password=request.POST['old_password'],encoded=request.user.password))
+
+
 # def GetCompany(request):
 #     """view to handle the ajax request when user search for the company to claim"""
 #     search_qs = CompanyModel.objects.filter(is_claimed=False, is_approved=True)
@@ -66,7 +91,7 @@ def Logout(request):
 #     for r in search_qs:
 #         results.append(r.company_name)
 #     resp = simplejson.dumps(results)
-#     return HttpResponse(resp, content_type='application/json')
+#     return HttpResponse(resp, content_type='appliscation/json')
 #
 # def CreateUserAndClaimCompany(request):
 #     """view to handle the request to create user and to save a company claim request"""

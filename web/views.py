@@ -7,9 +7,10 @@ from pprint import pprint
 # from django.utils import simplejson
 import json as simplejson
 # from web.utils import CreateCompanyUtil,  CreateUserUtil, CreateCompanyUtil, CreateUserProfileUtil, CreateUserAndCompanyUtil, CreateUserAndClaimCompanyUtil,  CreateUserAndUserProfileUtil# from web.forms import CreateUserForm, CreateCompanyForm, CreateUserAndCompanyForm
-from web.utils import *
+from core.utils import *
 from web.forms import *
 from core.models import *
+from core.views import *
 
 
 def Landing(request):
@@ -22,7 +23,7 @@ def Landing(request):
 @login_required
 def Dashboard(request):
     """Dashboard Page"""
-    context={}
+    context=ContextMaker(request)
     if request.GET.get('status') == 'login':
         context['message'] = "Login Sucessful"
     return render(request, 'dashboard.html', context=context)
@@ -328,7 +329,6 @@ def PostRequirement(request):
     current_form = None
     if request.method == 'GET':
         current_form = PostRequirementForm()
-
     if request.method == 'POST':
         current_form = PostRequirementForm(request.POST)
         if current_form.is_valid():
@@ -362,9 +362,39 @@ def SearchCompanyAjax(request):
     resp = simplejson.dumps(results)
     return HttpResponse(resp, content_type='application/json')
 
+def CheckUserEmailAjax(request):
+    """This view returns True if the user email already exist in the database"""
+    return HttpResponse(User.objects.filter(email=request.POST['user_email']).exists())
+
+def CheckCompanyEmailAjax(request):
+    """This view return true if the company email already exist in the database"""
+    return HttpResponse(CompanyModel.objects.filter(company_email=request.POST['company_email']).exists())
+
+def CheckCompanyNameAjax(request): #Work on this later .. this is badly written
+    """This view return true if the company name already exist in the database"""
+    company_name = request.POST['company_name'].strip() #to strip the white space in the start.
+    # company_name_list = [company_name.upper(), company_name.lower()]
+    # return HttpResponse(CompanyModel.objects.filter(map(lambda company_name: company_name = company_name, company_name_list)))
+    # return HttpResponse(CompanyModel.objects.filter(lambda company_name: company_name, [company_name.upper(), company_name.lower()])
+    if CompanyModel.objects.filter(company_name=company_name.upper()).exists():
+        return HttpResponse(True)
+    elif CompanyModel.objects.filter(company_name = company_name.lower()).exists():
+        return HttpResponse(True)
+    else:
+        return HttpResponse(False)
+
+    # return HttpResponse(CompanyModel.objects.filter(company_name=company_name.lower()).exists())
+
 def Test(request):
-    """This is just for testing dummy code. This is for testing purpose only"""
+    """This is just for testing dummy code. This is for testing purpose onlCheckCompnayEmailExistAjaxty"""
     if request.method == 'GET':
-        return render(request, 'register.html', context=None)
+        return render(request, 'test1.html', context=None)
+    if request.method=='POST':
+        search_result = CompanyModel.objects.filter(company_name__contains='cheese')
+
+def Test1(request):
+    """This is just for testing dummy code. This is for testing purpose onlCheckCompnayEmailExistAjaxty"""
+    if request.method == 'GET':
+        return render(request, 'test1.html', context=None)
     if request.method=='POST':
         search_result = CompanyModel.objects.filter(company_name__contains='cheese')

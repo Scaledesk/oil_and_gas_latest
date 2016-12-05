@@ -1,10 +1,7 @@
-{% extends "base1.html"%}
+{% extends "base.html"%}
 {% load widget_tweaks %}
 {% block custom_style %}
 {% endblock %}
-
-
-
 {% block content %}
 
 <section class="login-section img-section">
@@ -25,7 +22,13 @@
     </div>
     <div class="col-md-6 login-form register-padding">
       <h3>Register</h3>
-      <form class="form-login custom-form-login" method="post" action="/create-user-and-company/" enctype="multipart/form-data">
+      {% if message %}
+      <p style="color:green; font-size:125%">{{ message }}</p>
+      {% endif %}
+      {% if error %}
+      <p style="color:red; font-size:125%">{{ error }}</p>
+      {% endif %}
+      <form id="create_user_and_company_form" class="form-login custom-form-login" method="post" action="/create-user-and-company/" enctype="multipart/form-data">
 
         {% csrf_token %}
 
@@ -51,7 +54,8 @@
 
         <div class="form-group">
           <label for="user_email">User Email:</label><br>
-          {{ form.user_email|attr:"class:form-control"|attr:"type:email"|attr:"required:true"|attr:"autocomplete:off" }}
+          {{ form.user_email|attr:"class:form-control"|attr:"type:email"|attr:"required:true"|attr:"autocomplete:off"}}
+          <p class="text-danger" id="user_email_error"></p>
         </div>
 
         <div class="form-group">
@@ -62,13 +66,14 @@
         <div class="form-group">
           <label for="password">Password:</label>
           {{ form.password|attr:"class:form-control"|attr:"type:password"|attr:"required:true"|attr:"autocomplete:off" }}
+          <p class="text-danger" id="password_error"></p>
         </div>
 
 
         <div class="form-group">
           <label for="password">Confirm Password:</label>
           {{ form.confirm_password|attr:"class:form-control"|attr:"type:password"|attr:"required:true"|attr:"autocomplete:off" }}
-
+          <p class="text-danger" id="confirm_password_error"></p>
         </div>
 
 
@@ -77,16 +82,17 @@
 
         <div class="form-group">
           <label for="company_name">Company Name:</label>
-          {{ form.company_name|attr:"class:form-control"|attr:"id:company_name"|attr:"type:text"|attr:"style:text-transform:uppercase"|attr:"required:true"|attr:"autocomplete:off" }}
+          {{ form.company_name|attr:"class:form-control"|attr:"type:text"|attr:"style:text-transform:uppercase"|attr:"required:true"|attr:"autocomplete:off"}}
+          <p class="text-danger" id="company_name_error"></p>
         </div>
         <div class="form-group">
           <label for="id_where_heard_abt_us">Where you heard about us ?:</label><br>
           {{ form.ad_reference|attr:"class:form-control"|attr:"autocomplete:off"}}
-
         </div>
         <div class="form-group">
           <label for="company_email">Company Email:</label><br>
-          {{ form.company_email|attr:"class:form-control"|attr:"type:email"|attr:"required:true"|attr:"autocomplete:off" }}
+          {{ form.company_email|attr:"class:form-control"|attr:"type:email"|attr:"required:true"|attr:"autocomplete:off"}}
+          <p class="text-danger" id="company_email_error"></p>
         </div>
 
         <div class="form-group">
@@ -110,4 +116,112 @@
 {% endblock %}
 
 {% block custom_script %}
-{% endblock %}
+<script>//Form Validation Script
+var user_email_check = false;
+var password_check = false;
+var confirm_password_check = false;
+var company_name_check = false;
+var company_email_check = false;
+
+$("#id_user_email").change(function(){
+  user_email_check = false;
+  $("user_email_error" ).text( "" );
+  if ($("#id_user_email").val() == ""){
+    $("#user_email_error").text("You can't leave this empty.")
+  }else {
+    $("#loader_user_email").show();
+    $.post("{% url 'check_user_email_ajax' %}",{
+      'csrfmiddlewaretoken' : getCookie('csrftoken'),
+      'user_email' : $("#id_user_email").val() },
+      function(data, status){
+        $("#loader_user_email").hide();
+        if (data == 'True'){
+          $("#user_email_error" ).text( "This email id is already assiociated with another account." );
+        }else {
+          $("#user_email_error" ).text( "" );
+          user_email_check = true;
+        }
+      });
+    }
+  });
+
+  $("#id_password").change(function(){
+    password_check = false;
+    $("#id_confirm_password").val("")
+    $("#confirm_password_error" ).text( "" );
+    if ($("#id_password").val() == ""){
+      $("#password_error").text("You can't leave this empty.")
+    }else{
+      if ($("#id_password").val().length < 8){
+        $("#password_error" ).text( "Password must contain atleast 8 characters" );
+      }else {
+        $("#password_error" ).text( "" );
+        password_check = true;
+      }
+    }
+  });
+
+  $("#id_confirm_password").change(function(){
+    confirm_password_check = false;
+    if ($("#id_confirm_password").val() == ""){
+      $("#confirm_password_error").text("You can't leave this empty.")
+    }else {
+      if($("#id_confirm_password").val() != $("#id_password").val()){
+        $("#confirm_password_error").text("New password and confirm password do not match.")
+      }else {
+        $("#confirm_password_error" ).text( "" );
+        confirm_password_check = true;
+      }
+    }
+  });
+
+  $("#id_company_name").change(function(){
+    company_name_check = false;
+    $("#company_name_error" ).text( "" );
+    if ($("#id_company_name").val() == ""){
+      $("#company_name_error").text("You can't leave this empty.")
+    }else {
+      $("#loader_company_name").show();
+      $.post("{% url 'check_company_name_ajax' %}",{
+        'csrfmiddlewaretoken' : getCookie('csrftoken'),
+        'company_name' : $("#id_company_name").val() },
+        function(data, status){
+          $("#loader_company_name").hide();
+          if (data == 'True'){
+            $("#company_name_error" ).text( "This name is already assiociated with another company." );
+          }else {
+            $("#company_name_error" ).text( "" );
+            company_name_check = true;
+          }
+        });
+      }
+    });
+  $("#id_company_email").change(function(){
+    company_email_check = false;
+    $("#company_email_error" ).text( "" );
+    if ($("#id_company_email").val() == ""){
+      $("#company_email_error").text("You can't leave this empty.")
+      alert('2')
+    }else {
+      $("#loader_company_email").show();
+      $.post("{% url 'check_company_email_ajax' %}",{
+        'csrfmiddlewaretoken' : getCookie('csrftoken'),
+        'company_email' : $("#id_company_email").val() },
+        function(data, status){
+          $("#loader_company_email").hide();
+          if (data == 'True'){
+            $("#company_email_error" ).text( "This email id is already assiociated with another company." );
+          }else {
+            $("#company_email_error" ).text( "" );
+            company_email_check = true;
+          }
+        });
+      }
+    });
+  $('#create_user_and_company_form').submit(function(e) {
+    if (!(user_email_check && password_check && confirm_password_check && company_name_check && company_email_check)){
+      e.preventDefault();
+    }
+  });
+  </script>
+  {% endblock %}
