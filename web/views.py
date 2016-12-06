@@ -404,7 +404,7 @@ def CheckCompanyNameAjax(request): #Work on this later .. this is badly written
 def Test(request):
     """This is just for testing dummy code. This is for testing purpose onlCheckCompnayEmailExistAjaxty"""
     if request.method == 'GET':
-        return render(request, 'test1.html', context=None)
+        return render(request, 'test.html', context=None)
     if request.method=='POST':
         search_result = CompanyModel.objects.filter(company_name__contains='cheese')
 
