@@ -3,29 +3,6 @@ from django.contrib.auth.models import User
 from core.models import *
 from pprint import pprint
 from datetime import datetime
-# from django.contrib.auth import authenticate
-
-# def authenticate_user(username,password):
-#     """util function for authenticating the user"""
-#     current_user=authenticate(username=username,password=password)
-#     authed=False
-#     if current_user:
-#         authed=True
-#     return authed, current_user
-
-# def register_user(email, password, first_name, last_name):
-#     """util function to register the user"""
-#     registered=False
-#     current_user=User.object.create(email,email,password)
-#     registered=True
-#     return registered,'User registered successfully',current_user
-
-# def change_password(username,password):
-#     """Util functiopn for changing the password of the user"""
-#     current_user=User.objects.get(username=username)
-#     current_user.set_password(password)
-#     current_user.save()
-#     return True
 
 
 def ChangePasswordUtil(data_dict, user):
@@ -140,25 +117,25 @@ def CreateUserAndClaimCompanyUtil(data_dict, company_name):
     else:
         return False
 
-def IsPremium(user):
-    """
-    Util function return Trye if the company of user has premium/super_premium subscription.
-    """
-    c = CompanyModel.objects.get(owner=user)
-    if c.sub_plan.sub_type=='P' or c.sub_plan.sub_type=='S':
-        return True
-    else:
-        return False
-
-def IsSuperPremium(user):
-    """
-    Util function return true only if the company of user has superpremium subscription
-    """
-    c = CompanyModel.objects.get(owner=user)
-    if c.sub_plan.sub_type=='S':
-        return True
-    else:
-        return False
+# def IsPremium(user):
+#     """
+#     Util function return Trye if the company of user has premium/super_premium subscription.
+#     """
+#     c = CompanyModel.objects.get(owner=user)
+#     if c.sub_plan.sub_type=='P' or c.sub_plan.sub_type=='S':
+#         return True
+#     else:
+#         return False
+#
+# def IsSuperPremium(user):
+#     """
+#     Util function return true only if the company of user has superpremium subscription
+#     """
+#     c = CompanyModel.objects.get(owner=user)
+#     if c.sub_plan.sub_type=='S':
+#         return True
+#     else:
+#         return False
 
 ############################################## Free Fields #######################################################
 

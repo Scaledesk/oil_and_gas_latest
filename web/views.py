@@ -11,7 +11,7 @@ from core.utils import *
 from web.forms import *
 from core.models import *
 from core.views import *
-
+from core.custom_decorators import *
 
 def Landing(request):
     """Landing page"""
@@ -19,6 +19,7 @@ def Landing(request):
     if request.GET.get('status') == "logout":
         context['message'] = ("Logout Successful")
     return render(request, 'landing.html', context=context)
+
 
 @login_required
 def Dashboard(request):
@@ -130,12 +131,13 @@ def FreeField(request):
             error = current_form.errors.values()[0]
     return render(request, 'free/free_field.html', context = {'form':current_form, 'error':error})
 
+##### PREMIUM SUBSCRIPTION REQUIRED #####
 @login_required
+@premium_required
 def BasicPremiumField(request):
     """view to handle the premium fields"""
-    if not IsPremium(request.user):
-        return HttpResponse('This will require premium subscription or super-premium subscription')
-
+    # if not IsPremium(request.user):
+    #     return HttpResponse('This will require premium subscription or super-premium subscription')
     current_form = None
     error = None
     if request.method == 'GET':
@@ -152,6 +154,7 @@ def BasicPremiumField(request):
     return render(request, 'premium/basic_premium_field.html', context = {'form':current_form, 'error':error})
 
 @login_required
+@premium_required
 def Gallery(request):
     """ view to handle the gallery images """
     if not IsPremium(request.user):
@@ -173,6 +176,7 @@ def Gallery(request):
     return render(request, 'premium/gallery.html', context = {'form':current_form, 'error':error})
 
 @login_required
+@premium_required
 def Brochure(request):
     """ view to save the company brochure """
     if not IsPremium(request.user):
@@ -194,6 +198,7 @@ def Brochure(request):
     return render(request, 'premium/brochure.html', context = {'form':current_form, 'error':error})
 
 @login_required
+@premium_required
 def VideoLink(request):
     """view to save the video links """
     if not IsPremium(request.user):
@@ -224,6 +229,7 @@ def SearchAlliance(request):
     return HttpResponse(resp, content_type='application/json')
 
 @login_required
+@premium_required
 def Alliance(request):
     """view to save the company's alliance to other company already in the database """
     if not IsPremium(request.user):
@@ -242,6 +248,7 @@ def Alliance(request):
     return render(request, 'premium/alliance.html', context=None)
 
 @login_required
+@premium_required
 def Location(request):
     """view to save the location of company"""
     if not IsPremium(request.user):
@@ -262,6 +269,7 @@ def Location(request):
     return render(request, 'premium/location.html', context = {'form':current_form, 'error':error})
 
 @login_required
+@premium_required
 def Certification(request):
     """" view to save the certification of the company """
     if not IsPremium(request.user):
@@ -280,13 +288,17 @@ def Certification(request):
         else:
             error = current_form.errors.values()[0]
     return render(request, 'premium/certification.html', context = {'form':current_form, 'error':error})
+#### PREMIUM REQUIRED FIELDS END ####
 
+
+
+#### SUPER PREMIUM REQUIRED FIELDS START ####
 @login_required
+@super_premium_required
 def SocialLink(request):
     """view to save the social media links of the company"""
-    if not IsSuperPremium(request.user):
-        return HttpResponse('This will require premium subscription or super-premium subscription')
-
+    # if not IsSuperPremium(request.user):
+    #     return HttpResponse('This will require premium subscription or super-premium subscription')
     current_form = None
     error = None
     if request.method == 'GET':
@@ -303,10 +315,11 @@ def SocialLink(request):
     return render(request, 'premium/social_link.html', context = {'form':current_form, 'error':error})
 
 @login_required
+@super_premium_required
 def Publication(request):
     """view to save the published articles of the company"""
-    if not IsSuperPremium(request.user):
-        return HttpResponse('This will require premium subscription or super-premium subscription')
+    # if not IsSuperPremium(request.user):
+    #     return HttpResponse('This will require premium subscription or super-premium subscription')
     error = None
     current_form = None
     if request.method == 'GET':
@@ -321,7 +334,9 @@ def Publication(request):
         else:
             error = current_form.errors.values()[0]
     return render(request, 'super_premium/publication.html', context={'form':current_form, 'error':error})
+#### SUPER PREMIUM REQUIRED FIELDS END ####
 
+#### REQUIREMENT START ####
 @login_required
 def PostRequirement(request):
     """view to save the requirement posted by the company"""
@@ -339,6 +354,7 @@ def PostRequirement(request):
         else:
             error = current_form.error.values()[0]
     return render(request, 'requirement/post_requirement.html', {'error':error, 'form':current_form})
+#### REQUIREMENT END ####
 
 def SearchCompany(request):
     """This is just for searching company"""
