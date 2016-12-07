@@ -1,4 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
+<div id="main_content">
 <h1>THIS IS THE MAIN AREA</h1>
+</div>
+{% endblock %}
+
+{% block custom_script %}
+
+<!-- script for change password -->
+<script type="text/javascript" >
+    $(document).ready(function(){
+       $("#change_password_button").click(function(){
+        $('#main_content').load('/account/change-password/');
+       });
+     });
+</script>
+
+<!-- $("change").click(function(){
+    $.get("demo_test.asp", function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+    });
+}) -->
+
 {% endblock %}

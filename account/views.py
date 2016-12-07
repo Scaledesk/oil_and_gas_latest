@@ -72,7 +72,8 @@ def ChangePassword(request):
         # confirm_password = request.POST['confirm_password']
         # pprint("_________________" + str(request.POST))
         if ChangePasswordUtil(request.POST, request.user):
-            return HttpResponse("password changed")
+            return HttpResponse("True")
+            # return HttpResponse("password changed")
         else:
             return Http404
 
