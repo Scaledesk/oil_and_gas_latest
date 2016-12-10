@@ -1,7 +1,6 @@
-{% extends "base.html" %}
 {% load widget_tweaks %}
 
-{% block content %}
+{% block main_area %}
 
 <div class="container">
 
@@ -10,24 +9,19 @@
 
             <h3 class="text-center">Video Link</h3>
 
-            <form id="form"  action="/web/video_link/" method="post" enctype="multipart/form-data" >
-
-                {% if error %}
-                {% for errors in error %}
-                <p class="text-danger">{{ errors }}</p>
-                {% endfor %}
-                {% endif %}
+            <form id="form"  action="{% url 'video_link' %}" method="post" enctype="multipart/form-data" >
 
                 <div class="form-group text-center">
 
                     <div class="col-md-offset-3 col-md-8">
                         {% csrf_token %}
-
+                        {% for form in form_list %}
+                        <p>{{ forloop.counter}}<p>
                         <div class="form-group">
                             <label for="id_video_link">Video Link:</label>
                             {{ form.video_link|attr:"class:form-control" }}
                         </div>
-
+                        {% endfor %}
                         <div id="lower text-center">
                             <br>
                             <button class="btn ladda-button btn-theme btn-block" data-style="slide-right" style="color: #2A3542"><span class="ladda-label">Submit</span></button>
@@ -39,14 +33,7 @@
     </div>
 </div>
 
-
-
-
-{% block custom_script %}
-
 <script>
 
 </script>
-
 {% endblock %}
-{% endblock content %}

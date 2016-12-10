@@ -12,6 +12,8 @@ from web.forms import *
 from core.models import *
 from core.views import *
 from core.custom_decorators import *
+from django.conf import settings
+
 
 def Landing(request):
     """Landing page"""
@@ -115,33 +117,37 @@ def CreateUserAndCompany(request):
     return render(request, "create_user_and_company.html", context={'form':current_form, 'error':error})
 
 @login_required
-def FreeField(request):
+def FreeFieldView(request):
     current_form = None
     error = None
     if request.method == 'GET':
-        current_form = FreeFieldForm()
+        ff = FreeField.objects.get(company=CompanyModel.objects.get(owner=request.user))
+        context = ContextMaker(request)
+        current_form = FreeFieldForm(ff.__dict__)
+        context['form'] = current_form
+        return render(request, 'free/free_field.html', context = context)
+
     if request.method == 'POST':
         current_form = FreeFieldForm(request.POST)
         if current_form.is_valid():
-            if CreateFreeFieldUtil(current_form.cleaned_data, request.user):
-                return HttpResponse('data has been saved')
-            else:
-                return Http404
-        else:
-            error = current_form.errors.values()[0]
-    return render(request, 'free/free_field.html', context = {'form':current_form, 'error':error})
+            return HttpResponse(CreateFreeFieldUtil(current_form.cleaned_data, request.user))
 
 ##### PREMIUM SUBSCRIPTION REQUIRED #####
 @login_required
 @premium_required
-def BasicPremiumField(request):
+def BasicPremiumFieldView(request):
     """view to handle the premium fields"""
     # if not IsPremium(request.user):
     #     return HttpResponse('This will require premium subscription or super-premium subscription')
     current_form = None
     error = None
     if request.method == 'GET':
-        current_form = BasicPremiumFieldForm()
+        bpf = BasicPremiumField.objects.get(company=CompanyModel.objects.get(owner=request.user))
+        current_form = BasicPremiumFieldForm(bpf.__dict__)
+        context = ContextMaker(request)
+        context['form'] = current_form
+        return render(request, 'premium/basic_premium_field.html', context = context)
+
     if request.method == 'POST':
         current_form = BasicPremiumFieldForm(request.POST, request.FILES)
         if current_form.is_valid():
@@ -177,14 +183,16 @@ def Gallery(request):
 
 @login_required
 @premium_required
-def Brochure(request):
+def BrochureView(request):
     """ view to save the company brochure """
-    if not IsPremium(request.user):
-        return HttpResponse('This will require premium subscription or super-premium subscription')
+    # if not IsPremium(request.user):
+    #     return HttpResponse('This will require premium subscription or super-premium subscription')
 
     current_form = None
     error = None
     if request.method == 'GET':
+        # if  Brochure.objects.filter(company=request.CompanyModel.objecs.get(owner=request.user)):
+        #     Current = Brochure.objects.filter(company=request.CompanyModel.objecs.get(owner=request.user))
         current_form = BrochureForm()
     if request.method == 'POST':
         current_form = BrochureForm(request.POST, request.FILES)
@@ -197,17 +205,23 @@ def Brochure(request):
             error = current_form.errors.values()[0]
     return render(request, 'premium/brochure.html', context = {'form':current_form, 'error':error})
 
+@ajax_required
 @login_required
 @premium_required
-def VideoLink(request):
+def VideoLinkView(request):
     """view to save the video links """
-    if not IsPremium(request.user):
-        return HttpResponse('This will require premium subscription or super-premium subscription')
-
-    current_form = None
-    error = None
+    # if not IsPremium(request.user):
+    #     return HttpResponse('This will require premium subscription or super-premium subscription')
+    current_form_list = []
     if request.method == 'GET':
-        current_form = VideoLinkForm()
+        vl = VideoLink.objects.filter(company=CompanyModel.objects.get(owner=request.user))
+        for link in vl:
+            current_form = VideoLinkForm(link.__dict__)
+            current_form_list.append(current_form)
+        for num in range(len(current_form_list), settings.MAX_VIDEO_LINK):
+            current_form = VideoLinkForm()
+            current_form_list.append(current_form)
+        return render(request, "premium/video_link.html", context={'form_list':current_form_list})
     if request.method == 'POST':
         current_form = VideoLinkForm(request.POST)
         if current_form.is_valid():

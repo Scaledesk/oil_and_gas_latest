@@ -1,31 +1,25 @@
 from __future__ import unicode_literals
-
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.conf import settings
 # Create your models here.
 import datetime
 from oil_and_gas.settings import SERIALIZABLE_VALUE
 import pycountry # for help :- https://pypi.python.org/pypi/pycountry
 from pprint import pprint
-
 from core.model_validations import *
 
 class BaseModel(models.Model):
     """Base class for all the models"""
-
     def serialize_data(self):
         #get the serializable keys
         current_instance_name= self.__class__.__name__
         serializable_keys=SERIALIZABLE_VALUE.get(current_instance_name)
         serialized_data={}
-
         for i in serializable_keys:
-
             #get the valjue from the class
-            current_value=getattr(self,i)
-
             #handle dates specifically
+            current_value=getattr(self,i)
             if isinstance(current_value, datetime.datetime):
                 current_value=str(current_value)
             serialized_data[i] = current_value
@@ -40,7 +34,6 @@ class NewsLetterSubscription(BaseModel):
 
 class UserProfile(BaseModel):
     """ Model for storing basic information about a user """
-
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
@@ -50,7 +43,6 @@ class UserProfile(BaseModel):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     dob = models.DateField()
     user_phone_no = models.CharField(max_length=10)
-
     class Meta:
         verbose_name = 'User Profile'
         verbose_name_plural = 'User Profiles'
@@ -187,7 +179,7 @@ class FreeField(BaseModel):
         #     return True
         # return True
         self.full_clean(exclude=None)
-        super(ReqSubscriptionPlan, self).save(*args, **kwargs)
+        super(FreeField, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return (self.company.company_name)
@@ -215,10 +207,17 @@ class Gallery(BaseModel): #10
 
     company = models.ForeignKey(CompanyModel, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='company_gallery/')
-
     class Meta:
         verbose_name = 'Gallery'
         verbose_name_plural = 'Galleries'
+
+    def save(self, *args, **kwargs):
+        """ Override FreeField's save """
+        if len(Gallery.objects.filter(company=self.company)) < settings.MAX_GALLERY_IMAGE:
+            return super(Gallery, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 
@@ -231,30 +230,51 @@ class Brochure(BaseModel):
     class Meta:
         verbose_name = 'Brochure'
         verbose_name_plural = 'Brochures'
+
+    def save(self, *args, **kwargs):
+        """ Override FreeField's save """
+        if len(Brochure.objects.filter(company=self.company)) < settings.MAX_BROCHURE:
+            return super(Brochure, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 
 class VideoLink(BaseModel):
     """Model to save video links for premium subscription. Max limit 2"""
-
     company = models.ForeignKey(CompanyModel, on_delete=models.CASCADE)
     video_link = models.CharField(max_length=200)
-
     class Meta:
+
         verbose_name = 'Video Link'
         verbose_name_plural = 'Video Links'
+    def save(self, *args, **kwargs):
+        """ Override FreeField's save """
+        if len(VideoLink.objects.filter(company=self.company)) < settings.MAX_VIDEO_LINK:
+            return super(VideoLink, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 
 class KeyClient(BaseModel): #15
     """Model to sace list of key clients for premium subscription. Max limit 15"""
-
     company = models.ForeignKey(CompanyModel, on_delete=models.CASCADE)
     key_client = models.CharField(max_length=150)
 
     class Meta:
         verbose_name = 'Key Client'
         verbose_name_plural = 'Key Clients'
+
+    def save(self, *args, **kwargs):
+        """ Override FreeField's save """
+        if len(KeyClient.objects.filter(company=self.company)) < settings.MAX_KEY_CLIENT:
+            return super(KeyClient, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 
@@ -266,6 +286,14 @@ class KeyAlliance(BaseModel):
     class Meta:
         verbose_name = 'Key Alliance'
         verbose_name_plural = 'Key Alliances'
+
+    def save(self, *args, **kwargs):
+        """ Override FreeField's save """
+        if len(KeyAlliance.objects.filter(company=self.company)) < settings.MAX_KEY_ALLIANCE:
+            return super(KeyAlliance, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 
@@ -279,6 +307,14 @@ class Location(BaseModel):
     class meta:
         verbose_name = 'Location'
         verbose_name_plural = 'Locations'
+
+    def save(self, *args, **kwargs):
+        """ Override Location's save """
+        if len(Location.objects.filter(company=self.company)) < settings.MAX_LOCATION:
+            return super(Location, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 
@@ -293,6 +329,14 @@ class Certification(BaseModel):
     class meta:
         verbose_name = 'Certification'
         verbose_name_plural = 'Certifications'
+
+    def save(self, *args, **kwargs):
+        """ Override FreeField's save """
+        if len(Certification.objects.filter(company=self.company)) < settings.MAX_CERTIFICATION:
+            return super(Certification, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 
@@ -329,6 +373,14 @@ class Publication(BaseModel):
     class meta:
         verbose_name = 'Publication'
         verbose_name_plural = 'Publications'
+
+    def save(self, *args, **kwargs):
+        """ Override FreeField's save """
+        if len(Publication.objects.filter(company=self.company)) < settings.MAX_PUBLICATION:
+            return super(Publication, self).save(*args, **kwargs)
+        else:
+            return False
+
     def __unicode__(self):
         return (self.company.company_name)
 

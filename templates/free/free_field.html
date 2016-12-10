@@ -1,86 +1,74 @@
-{% extends "base.html" %}
 {% load widget_tweaks %}
 
-{% block content %}
-
-<div class="container">
-
-    <div class="row">
-        <div class="col-md-offset-3 col-md-6 ">
-
-            <h3 class="text-center">Free Fields</h3>
-
-            <form id="form"  action="/web/free_field/" method="post" enctype="multipart/form-data" >
-
-                {% if error %}
-                {% for errors in error %}
-                <p class="text-danger">{{ errors }}</p>
-                {% endfor %}
-                {% endif %}
-
-                <div class="form-group text-center">
-
-                    <div class="col-md-offset-3 col-md-8">
-                        
-
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="id_address">Address:</label>
-                            {{ form.address|attr:"class:form-control"|attr:"type:text"|attr:"autocomplete:off" }}
-                        </div>
-
-                        <div class="form-group">
-                            <label for="id_pin">PIN:</label>
-                            {{ form.pin|attr:"class:form-control"|attr:"autocomplete:off"|attr:"pattern:[0-9]{6}"|attr:"title:Invalid PIN code" }}
-                        </div>
-
-                        <div class="form-group">
-                            <label for="id_website">Website:</label>
-                            {{ form.website|attr:"class:form-control"|attr:"autocomplete:off" }}
-                        </div>
-
-                        <div class="form-group">
-                            <label for="id_year_founded">Year Founded:</label>
-                            {{ form.year_founded|attr:"class:form-control"|attr:"autocomplete:off"|attr:"pattern:[12][0-9]{3}" }}
-                        </div>
-
-                        <div class="form-group">
-                            <label for="id_about">About:</label>
-                            {{ form.about|attr:"class:form-control"|attr:"autocomplete:off" }}
-                        </div>
-
-                        <div id="lower text-center">
-                            <br>
-                            <button class="btn ladda-button btn-theme btn-block" data-style="slide-right" style="color: #2A3542"><span class="ladda-label">Submit</span></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
+{% block edit %}
+<div id="update">
+<div class="box-header">
+  <h2>Change Password</h2>
+  <small>Fill the form to change your password</small>
 </div>
+<form id="free_field_form"  action="{% url "free_field" %}" method="post" enctype="multipart/form-data" >
+  <div class="form-group text-center">
+    <div class="col-md-offset-3 col-md-8">
 
+      <div class="form-group">
+        <label for="id_address">Address:</label>
+        {{ form.address|attr:"class:form-control"|attr:"rows:5"|attr:"autocomplete:off" }}
+      </div>
 
+      <div class="form-group">
+        <label for="id_city">City:</label>
+        {{ form.city|attr:"class:form-control"|attr:"type:text"|attr:"autocomplete:off" }}
+      </div>
 
+      <div class="form-group">
+        <label for="id_pin">PIN:</label>
+        {{ form.pin|attr:"class:form-control"|attr:"autocomplete:off"|attr:"pattern:[0-9]{6}"|attr:"title:Invalid PIN code" }}
+      </div>
 
-{% block custom_script %}
+      <div class="form-group">
+        <label for="id_website">Website:</label>
+        {{ form.website|attr:"class:form-control"|attr:"autocomplete:off"|attr:"type:url" }}
+      </div>
 
-<script>
+      <div class="form-group">
+        <label for="id_year_founded">Year Founded:</label>
+        {{ form.year_founded|attr:"class:form-control"|attr:"autocomplete:off"|attr:"pattern:[12][0-9]{3}" }}
+      </div>
 
-</script>
+      <div class="form-group">
+        <label for="id_about">About:</label>
+        {{ form.about|attr:"class:form-control"|attr:"rows:5"|attr:"autocomplete:off" }}
+      </div>
 
+      <div id="lower text-center">
+        <br>
+        <button class="btn ladda-button btn-theme btn-block" data-style="slide-right" style="color: #2A3542"><span class="ladda-label">Submit</span></button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</form>
+</div>
 {% endblock %}
-{% endblock content %}
-
-
-
-
-
-
-
-
-
-
-
-
-
+<script>
+$('#free_field_form').submit(function(e) {
+  e.preventDefault();
+  $.post("{% url "free_field"%}",{
+    'csrfmiddlewaretoken' : getCookie('csrftoken'),
+    'address' : $("#id_address").val(),
+    'city' : $("#id_city").val(),
+    'pin' : $("#id_pin").val(),
+    'website' : $("#id_website").val(),
+    'year_founded' : $("#id_year_founded").val(),
+    'about' : $("#id_about").val(), },
+    function(data, status){
+      if (data == 'True'){
+        alert('Free Fields Saved');
+        window.location.href = '/dashboard/';
+      }else {
+        alert('server error');
+      }
+    });
+  });
+</script>

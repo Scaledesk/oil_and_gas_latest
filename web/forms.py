@@ -157,12 +157,12 @@ class CreateCompanyForm(BaseForm):
 
 class FreeFieldForm(BaseForm):
     """Form to input the free subscription fields for a company """
-    address = forms.CharField(max_length=120, label="Address Line 1:", required=False)
+    address = forms.CharField(max_length=120, label="Address Line 1:", required=False, widget=forms.Textarea)
     city = forms.CharField(max_length=30, label="City:", required=False)
     pin = forms.CharField(max_length=6, label="pin", required=False)
     website = forms.CharField(max_length=200, label="Company website:", required=False)
     year_founded = forms.CharField(max_length=4, label="Year Founded:", required=False)
-    about = forms.CharField(max_length=100, label="About Company:", required=False)
+    about = forms.CharField(max_length=100, label="About Company:", required=False, widget=forms.Textarea)
 
 #### Free Subscription Form ####
 
@@ -174,7 +174,7 @@ class BasicPremiumFieldForm(BaseForm):
     """ Form to save the basic premium fields of the company"""
     logo = forms.ImageField(required=False, label="Company logo:")
     registration_no = forms.CharField(max_length=12, label="Company registration No:", required=False)
-    bio = forms.CharField(max_length=1000, label="Company bio:", required=False)
+    bio = forms.CharField(max_length=1000, label="Company bio:", widget=forms.Textarea,  required=False)
     no_of_emp = forms.IntegerField(required=False, label="No of employee:")
     sale_volume = forms.CharField(max_length=30, label="Sale volume:", required=False)
 

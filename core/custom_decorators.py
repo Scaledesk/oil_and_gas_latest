@@ -6,7 +6,9 @@
 # from django.utils.http import urlquote
 
 from django.shortcuts import render, render_to_response, HttpResponse, Http404, redirect
+from django.http import HttpResponseBadRequest
 from core.models import *
+
 
 # def password_required(view_func=None, redirect_field_name=REDIRECT_FIELD_NAME):
 #     """
@@ -24,7 +26,7 @@ from core.models import *
 #         ))
 #     return wraps(view_func, assigned=available_attrs(view_func))(_wrapped_view)
 
-def premium_required(view_fun):
+def premium_required(view_fun, *args, **kwargs):
     """
     Decorator for views that checks if the company is premium, redirecting to the right page if necessary.
     """
@@ -37,7 +39,7 @@ def premium_required(view_fun):
             return HttpResponse('premium or super_premium subscription required')
     return decorator
 
-def super_premium_required(view_fun):
+def super_premium_required(view_fun, *args, **kwargs):
     """
     Decorator for views that checks if the company is premium, redirecting to the right page if necessary.
     """
@@ -50,7 +52,7 @@ def super_premium_required(view_fun):
             return HttpResponse('super premium subscription required')
     return decorator
 
-def requirement_sub_required(view_fun):
+def requirement_sub_required(view_fun, *args, **kwargs):
     """
     Decorators for the views that check is the company is subscribed to view requirement
     """
@@ -62,3 +64,16 @@ def requirement_sub_required(view_fun):
         else:
             return HttpResponse('you are not subscribed to view the requirement')
     return decorator
+
+def ajax_required(view_fun):
+    """
+    AJAX request required decorator
+    use it in your views:
+    """
+    def wrap(request, *args, **kwargs):
+            if not request.is_ajax():
+                return HttpResponseBadRequest("Bad Request")
+            return view_fun(request, *args, **kwargs)
+    wrap.__doc__=view_fun.__doc__
+    wrap.__name__=view_fun.__name__
+    return wrap

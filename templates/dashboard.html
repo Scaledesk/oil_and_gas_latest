@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 {% block content %}
 <div id="main_content">
 <h1>THIS IS THE MAIN AREA</h1>
@@ -10,9 +11,23 @@
 <!-- script for change password -->
 <script type="text/javascript" >
     $(document).ready(function(){
+
        $("#change_password_button").click(function(){
         $('#main_content').load('/account/change-password/');
        });
+
+       $("#free_field_button").click(function(){
+        $('#main_content').load('{% url "free_field" %}');
+       });
+
+       $("#basic_premium_field_button").click(function(){
+        $('#main_content').load('{% url "basic_premium_field" %}');
+       });
+
+       $("#video_link_button").click(function(){
+        $('#main_content').load('{% url "video_link" %}');
+       });
+
      });
 </script>
 

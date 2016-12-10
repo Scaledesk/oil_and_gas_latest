@@ -22,7 +22,7 @@ def ContextMaker(request):
         u.up = UserProfile.objects.get(user=u)
         c = CompanyModel.objects.get(owner=u)
 
-        # c.ff = FreeField.objects.get(company=c)
+        c.ff = FreeField.objects.get(company=c)
         #
         # c.bpf = BasicPremiumField.object.get(company=c)
         # c.ga = Gallery.objects.filter(company=c) #list

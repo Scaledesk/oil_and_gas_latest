@@ -1,5 +1,4 @@
 from pprint import pprint
-from core.models import *
 
 #### Methods to validate model objects before saving #####
 def is_phone_no_invalid(self, phone_number):
@@ -90,8 +89,20 @@ def validate_brochure(self):
     return True
 
 def validate_video_link(self):
+    # from core.models import VideoLink
     """Returns True if VideoLink object has valid data"""
-    return True
+    # obj = self.company
+    # pprint("___________666666666666666666____________" + str(VideoLink.objects.filter(company=obj)))
+    # alfa = self.company
+    # pprint("-----------------------------" + str(self.company))
+    # pprint("_____________________________" + str(VideoLink.objects.filter(company=alfa)))
+
+    if len(VideoLink.objects.get(company=self.company)) < 2:
+        pprint("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
+        return True
+    else:
+        pprint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        return False
 
 def validate_key_client(self):
     """Returns True if KeyClient has valid data"""

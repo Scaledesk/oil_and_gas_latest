@@ -143,21 +143,33 @@ def CreateFreeFieldUtil(data_dict, user):
     """
     Util function to save Free Fields
     """
-    ff=FreeField()
-    ff.company = CompanyModel.objects.get(owner=user)
-    ff.address = data_dict['address']
-    ff.city = data_dict['city']
-    ff.pin = data_dict['pin']
-    ff.website = data_dict['website']
-    ff.year_founded = data_dict['year_founded']
-    ff.about = data_dict['about']
-    ff.save()
-    return True
+    if FreeField.objects.get(company=CompanyModel.objects.get(owner=user)):
+        pprint("_________________________" + str(data_dict))
+        ff=FreeField.objects.get(company=CompanyModel.objects.get(owner=user))
+        ff.address = data_dict['address']
+        ff.city = data_dict['city']
+        ff.pin = data_dict['pin']
+        ff.website = data_dict['website']
+        ff.year_founded = data_dict['year_founded']
+        ff.about = data_dict['about']
+        ff.save()
+        return True
+    else:
+        ff=FreeField()
+        ff.company = CompanyModel.objects.get(owner=user)
+        ff.address = data_dict['address']
+        ff.city = data_dict['city']
+        ff.pin = data_dict['pin']
+        ff.website = data_dict['website']
+        ff.year_founded = data_dict['year_founded']
+        ff.about = data_dict['about']
+        ff.save()
+        return True
+    return False
 
-############################################## Free Feind End ########################################################
+############################################## Free Field End ########################################################
 
 ############################################## Premium Fields ######################################################
-
 
 def CreateBasicPremiumFieldUtil(data_dict, user):
     """
